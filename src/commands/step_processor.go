@@ -6,6 +6,7 @@ import (
 
 	"github.com/filanov/bm-inventory/client/inventory"
 	"github.com/filanov/bm-inventory/models"
+	"github.com/go-openapi/strfmt"
 	"github.com/ori-amizur/introspector/src/client"
 	"github.com/ori-amizur/introspector/src/config"
 	log "github.com/sirupsen/logrus"
@@ -20,6 +21,7 @@ func handleSingleStep(stepType models.StepType, data string, handler func(string
 	output, err := handler(data)
 	params := inventory.PostStepReplyParams{
 		HostID:     *CurrentHost.ID,
+		ClusterID:  strfmt.UUID(config.GlobalConfig.Cluster),
 		Context:    nil,
 		HTTPClient: nil,
 	}
@@ -56,7 +58,8 @@ func ProcessSteps() {
 	inventoryClient := client.CreateBmInventoryClient()
 	for {
 		params := inventory.GetNextStepsParams{
-			HostID: *CurrentHost.ID,
+			ClusterID: strfmt.UUID(config.GlobalConfig.Cluster),
+			HostID:    *CurrentHost.ID,
 		}
 		result, err := inventoryClient.Inventory.GetNextSteps(context.Background(), &params)
 		if err != nil {

@@ -6,6 +6,7 @@ import (
 
 	"github.com/filanov/bm-inventory/client/inventory"
 	"github.com/filanov/bm-inventory/models"
+	"github.com/go-openapi/strfmt"
 	"github.com/ori-amizur/introspector/src/client"
 	"github.com/ori-amizur/introspector/src/config"
 	"github.com/ori-amizur/introspector/src/scanners"
@@ -20,9 +21,9 @@ var CurrentHost *models.Host
 
 func createRegisterParams() *inventory.RegisterHostParams {
 	ret := &inventory.RegisterHostParams{
+		ClusterID: strfmt.UUID(config.GlobalConfig.Cluster),
 		NewHostParams: &models.HostCreateParams{
-			Namespace: &config.GlobalConfig.Namespace,
-			HostID:    scanners.ReadId(),
+			HostID: scanners.ReadId(),
 		},
 	}
 	return ret
