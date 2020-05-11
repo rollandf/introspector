@@ -1,8 +1,7 @@
-package commands
+package util
 
 import (
 	bytes2 "bytes"
-	log "github.com/sirupsen/logrus"
 	"os/exec"
 )
 
@@ -28,14 +27,15 @@ func getErrorStr(err error, stderr *bytes2.Buffer) string {
 	return ""
 }
 
-func Execute(command string, args []string) (string, string, int) {
+func Execute(command string, args ...string) (string, string, int) {
 	cmd := exec.Command(command, args...)
 	var stdout, stderr bytes2.Buffer
 	cmd.Stdout = &stdout
 	cmd.Stderr = &stderr
 	err := cmd.Run()
-	if err != nil {
-		log.Warnf("Error executing %s: %s", command, err.Error())
-	}
 	return string(stdout.Bytes()), getErrorStr(err, &stderr), getExitCode(err)
+}
+
+func ExecuteShell(command string) (string, string, int) {
+	return Execute("bash", "-c", command)
 }
