@@ -3,7 +3,7 @@ module github.com/ori-amizur/introspector
 go 1.13
 
 require (
-	github.com/filanov/bm-inventory v0.0.0-20200511021459-fec29cb251aa
+	github.com/filanov/bm-inventory v0.0.0-20200512143949-06b38072aada
 	github.com/go-openapi/strfmt v0.19.4
 	github.com/go-openapi/swag v0.19.7
 	github.com/google/uuid v1.1.1

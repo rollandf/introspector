@@ -87,6 +87,8 @@ github.com/filanov/bm-inventory v0.0.0-20200510130048-1becb95c0696 h1:qMwfrgoucR
 github.com/filanov/bm-inventory v0.0.0-20200510130048-1becb95c0696/go.mod h1:/PUQdIPpb2Wp9tL/70tpAcv12JKe6ZvhUANgvjfyFn4=
 github.com/filanov/bm-inventory v0.0.0-20200511021459-fec29cb251aa h1:QByqsEQouw916ksytokot9HE+MsFZEyY+uCY5I2iSqA=
 github.com/filanov/bm-inventory v0.0.0-20200511021459-fec29cb251aa/go.mod h1:/PUQdIPpb2Wp9tL/70tpAcv12JKe6ZvhUANgvjfyFn4=
+github.com/filanov/bm-inventory v0.0.0-20200512143949-06b38072aada h1:mo2xQ5eSGpFzEkjg4jDmOlBj8LppmuxSjdZdGDsjwuE=
+github.com/filanov/bm-inventory v0.0.0-20200512143949-06b38072aada/go.mod h1:/PUQdIPpb2Wp9tL/70tpAcv12JKe6ZvhUANgvjfyFn4=
 github.com/fsnotify/fsnotify v1.4.7/go.mod h1:jwhsz4b93w/PPRr/qN1Yymfu8t87LnFCMoQvtojpjFo=
 github.com/ghodss/yaml v0.0.0-20150909031657-73d445a93680/go.mod h1:4dBDuWmgqj2HViK6kFavaiC9ZROes6MMH2rRYeMEF04=
 github.com/ghodss/yaml v1.0.0 h1:wQHKEahhL6wmXdzwWG11gIVCkOv05bNOh+Rxn0yngAk=
