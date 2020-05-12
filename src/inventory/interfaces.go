@@ -5,6 +5,7 @@ import (
 	"github.com/filanov/bm-inventory/models"
 	"github.com/sirupsen/logrus"
 	"net"
+	"path/filepath"
 	"strings"
 )
 
@@ -16,6 +17,7 @@ type Interface interface {
 	HardwareAddr() net.HardwareAddr
 	Flags()        net.Flags
 	Addrs()        ([]net.Addr, error)
+	IsPhysical()   bool
 }
 
 type NetworkInterface struct {
@@ -40,6 +42,15 @@ func (n *NetworkInterface) Flags() net.Flags {
 
 func (n *NetworkInterface) Addrs() ([]net.Addr, error) {
 	return n.netInterface.Addrs()
+}
+
+func (n *NetworkInterface) IsPhysical() bool {
+	evaledPath, err := filepath.EvalSymlinks(fmt.Sprintf("/sys/class/net/%s", n.netInterface.Name))
+	if err != nil {
+		logrus.WithError(err).Warnf("Could not determin if interface %s is physical", n.netInterface.Name)
+		return true
+	}
+	return !strings.Contains(evaledPath, "/virtual/")
 }
 
 type interfaces struct {
@@ -108,6 +119,9 @@ func (i *interfaces) getInterfaces() []*models.Interface {
 		return ret
 	}
 	for _, in := range ins {
+		if !in.IsPhysical() {
+			continue
+		}
 		rec := models.Interface{
 			HasCarrier:    i.hasCarrier(in.Name()),
 			IPV4Addresses: make([]string, 0),
