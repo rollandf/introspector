@@ -5,7 +5,7 @@ import (
 	"github.com/filanov/bm-inventory/models"
 	"github.com/sirupsen/logrus"
 	"net"
-	"path/filepath"
+	"strconv"
 	"strings"
 )
 
@@ -18,10 +18,12 @@ type Interface interface {
 	Flags()        net.Flags
 	Addrs()        ([]net.Addr, error)
 	IsPhysical()   bool
+	SpeedMbps()    int64
 }
 
 type NetworkInterface struct {
 	netInterface net.Interface
+	dependencies IDependencies
 }
 
 func (n *NetworkInterface) MTU() int {
@@ -45,12 +47,25 @@ func (n *NetworkInterface) Addrs() ([]net.Addr, error) {
 }
 
 func (n *NetworkInterface) IsPhysical() bool {
-	evaledPath, err := filepath.EvalSymlinks(fmt.Sprintf("/sys/class/net/%s", n.netInterface.Name))
+	evaledPath, err := n.dependencies.EvalSymlinks(fmt.Sprintf("/sys/class/net/%s", n.netInterface.Name))
 	if err != nil {
 		logrus.WithError(err).Warnf("Could not determin if interface %s is physical", n.netInterface.Name)
 		return true
 	}
 	return !strings.Contains(evaledPath, "/virtual/")
+}
+
+func (n *NetworkInterface) SpeedMbps() int64 {
+	b, err := n.dependencies.ReadFile(fmt.Sprintf("/sys/class/net/%s/speed", n.Name()))
+	if err != nil {
+		logrus.WithError(err).Warnf("Could not read %s speed", n.Name())
+		return 0
+	}
+	ret, err := strconv.ParseInt(strings.TrimSpace(string(b)), 10, 32)
+	if err != nil {
+		logrus.WithError(err).Warnf("Could not parse %s speed", n.Name())
+	}
+	return ret
 }
 
 type interfaces struct {
@@ -133,6 +148,7 @@ func (i *interfaces) getInterfaces() []*models.Interface {
 			Product:       i.getDeviceField(in.Name(), "device"),
 			Vendor:        i.getDeviceField(in.Name(), "vendor"),
 			Flags: 		   getFlags(in.Flags()),
+			SpeedMbps:     in.SpeedMbps(),
 		}
 		addrs, err := in.Addrs()
 		if err != nil {

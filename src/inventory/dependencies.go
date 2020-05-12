@@ -47,7 +47,7 @@ func (d *Dependencies) Interfaces() ([]Interface, error) {
 	}
 	ret := make([]Interface, 0)
 	for _, in := range ins {
-		ret = append(ret, &NetworkInterface{netInterface:in})
+		ret = append(ret, &NetworkInterface{netInterface:in, dependencies:d})
 	}
 	return ret, nil
 }
