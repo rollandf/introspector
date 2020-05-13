@@ -233,7 +233,7 @@ func checkHost(outgoingNics []string, host *models.ConnectivityCheckHost, hostCh
 	hostChan <- ret
 }
 
-func ConnectivityCheck(_ string, args ...string) (string, string, int) {
+func ConnectivityCheck(_ string, args ...string) (stdout string, stderr string, exitCode int) {
 	if len(args) != 1 {
 		return "", "Expecting exactly 1 argument for connectivity command", -1
 	}

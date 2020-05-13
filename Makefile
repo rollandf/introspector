@@ -3,7 +3,6 @@ AGENT := $(or ${AGENT},quay.io/oamizur/agent:$(TAG))
 CONNECTIVITY_CHECK := $(or ${CONNECTIVITY_CHECK},quay.io/oamizur/connectivity_check:$(TAG))
 INVENTORY := $(or ${INVENTORY},quay.io/oamizur/inventory:$(TAG))
 HARDWARE_INFO := $(or ${HARDWARE_INFO},quay.io/oamizur/hardware_info:$(TAG))
-PATH := $(PATH):$(shell go env GOPATH)/bin
 
 all: build
 
@@ -50,4 +49,4 @@ subsystem: build-image
 	cd subsystem; docker-compose down
 
 generate:
-	PATH=$(PATH) go generate $(shell go list ./...)
+	go generate $(shell go list ./...)

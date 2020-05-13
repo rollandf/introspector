@@ -11,7 +11,7 @@ import (
 
 //go:generate mockery -name IDependencies -inpkg
 type IDependencies interface {
-	Execute(command string, args ...string) (string, string, int)
+	Execute(command string, args ...string) (stdout string, stderr string, exitCode int)
 	ReadFile(fname string) ([]byte, error)
 	Stat(fname string) (os.FileInfo, error)
 	Hostname() (string, error)
@@ -24,7 +24,7 @@ type IDependencies interface {
 
 type Dependencies struct{}
 
-func (d *Dependencies) Execute(command string, args ...string) (string, string, int) {
+func (d *Dependencies) Execute(command string, args ...string) (stdout string, stderr string, exitCode int) {
 	return util.Execute(command, args...)
 }
 

@@ -1,6 +1,8 @@
 package inventory
 
 import (
+	"fmt"
+	"github.com/sirupsen/logrus"
 	"net"
 	"regexp"
 	"strconv"
@@ -8,6 +10,8 @@ import (
 
 	"gopkg.in/yaml.v2"
 )
+
+const MaxIpmiChannel = 12
 
 type bmc struct{
 	dependicies IDependencies
@@ -17,14 +21,19 @@ func newBMC(dependencies IDependencies) *bmc {
 	return &bmc{dependicies: dependencies}
 }
 
-func (b *bmc) modprobe (module string) {
-	_, _, _ = b.dependicies.Execute("modprobe", module)
+func (b *bmc) modprobe (module string) error {
+	_, stderr, exitCode := b.dependicies.Execute("modprobe", module)
+	if exitCode != 0 {
+		logrus.Warnf("Could not modprobe module %s: %s", module, stderr)
+		return fmt.Errorf("Could not modprobe module %s: %s", module, stderr)
+	}
+	return nil
 }
 
 func (b *bmc)loadModules() {
-	b.modprobe("ipmi_msghandler")
-	b.modprobe("ipmi_devintf")
-	b.modprobe("ipmi_si")
+	_ = b.modprobe("ipmi_msghandler")
+	_ = b.modprobe("ipmi_devintf")
+	_ = b.modprobe("ipmi_si")
 }
 
 func (b *bmc)getIpForChannnel(ch int) string{
@@ -49,7 +58,7 @@ func (b *bmc)getIsEnabled(value interface{}) bool {
 
 func (b *bmc)getBmcAddress() string {
 	b.loadModules()
-	for ch := 1 ; ch <= 12 ; ch++ {
+	for ch := 1 ; ch <= MaxIpmiChannel ; ch++ {
 		ret := b.getIpForChannnel(ch)
 		if ret == "" {
 			continue
@@ -130,7 +139,7 @@ func (b *bmc)getAddrMode(ch int) string {
 
 func (b *bmc)getBmcV6Address() string {
 	b.loadModules()
-	for ch := 1 ; ch <= 12 ; ch++ {
+	for ch := 1 ; ch <= MaxIpmiChannel ; ch++ {
 		addrMode := b.getAddrMode(ch)
 		if addrMode == "" {
 			continue

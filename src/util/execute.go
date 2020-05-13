@@ -27,15 +27,15 @@ func getErrorStr(err error, stderr *bytes2.Buffer) string {
 	return ""
 }
 
-func Execute(command string, args ...string) (string, string, int) {
+func Execute(command string, args ...string) (stdout string, stderr string, exitCode int) {
 	cmd := exec.Command(command, args...)
-	var stdout, stderr bytes2.Buffer
-	cmd.Stdout = &stdout
-	cmd.Stderr = &stderr
+	var stdoutBytes, stderrBytes bytes2.Buffer
+	cmd.Stdout = &stdoutBytes
+	cmd.Stderr = &stderrBytes
 	err := cmd.Run()
-	return string(stdout.Bytes()), getErrorStr(err, &stderr), getExitCode(err)
+	return string(stdoutBytes.Bytes()), getErrorStr(err, &stderrBytes), getExitCode(err)
 }
 
-func ExecuteShell(command string) (string, string, int) {
+func ExecuteShell(command string) (stdout string, stderr string, exitCode int) {
 	return Execute("bash", "-c", command)
 }
