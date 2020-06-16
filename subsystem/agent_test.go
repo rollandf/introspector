@@ -172,10 +172,6 @@ var _ = Describe("Agent tests", func() {
 				StepType: models.StepTypeHardwareInfo,
 				StepID:   "hardware-info-step",
 			},
-			&models.Step{
-				StepType: models.StepTypeInventory,
-				StepID:   "inventory-step",
-			},
 		)
 		Expect(err).NotTo(HaveOccurred())
 		replyStubID, err := addStepReplyStub(hostID)
@@ -185,7 +181,6 @@ var _ = Describe("Agent tests", func() {
 		verifyRegisterRequest()
 		verifyGetNextRequest(hostID, true)
 		verifyStepReplyRequest(hostID, &HardwareInfoVerifier{})
-		verifyStepReplyRequest(hostID, &InventoryVerifier{})
 		err = deleteStub(registerStubID)
 		Expect(err).NotTo(HaveOccurred())
 		err = deleteStub(nextStepsStubID)
@@ -223,20 +218,6 @@ var _ = Describe("Agent tests", func() {
 				Command:  "docker",
 				Args:     strings.Split("run,--rm,--privileged,--net=host,-v,/var/log:/var/log,quay.io/ocpmetal/hardware_info:latest,/usr/bin/hardware_info", ","),
 			},
-			&models.Step{
-				StepType: models.StepTypeInventory,
-				StepID:   "inventory-step",
-				Command:  "docker",
-				Args: []string{
-					"run", "--privileged", "--net=host", "--rm",
-					"-v", "/var/log:/var/log",
-					"-v", "/run/udev:/run/udev",
-					"-v", "/dev/disk:/dev/disk",
-					"-v", "/run/systemd/journal/socket:/run/systemd/journal/socket",
-					"quay.io/ocpmetal/inventory:latest",
-					"inventory",
-				},
-			},
 		)
 		Expect(err).NotTo(HaveOccurred())
 		replyStubID, err := addStepReplyStub(hostID)
@@ -260,7 +241,6 @@ var _ = Describe("Agent tests", func() {
 			StepType: models.StepTypeExecute,
 		})
 		verifyStepReplyRequest(hostID, &HardwareInfoVerifier{})
-		verifyStepReplyRequest(hostID, &InventoryVerifier{})
 		err = deleteStub(registerStubID)
 		Expect(err).NotTo(HaveOccurred())
 		err = deleteStub(nextStepsStubID)
